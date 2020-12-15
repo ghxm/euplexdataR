@@ -1,0 +1,15 @@
+Package: euplexdata
+Type: Package
+Title: euplexdata
+Version: 0.1.0
+Author: Maximilian Haag
+Maintainer: Maximilian Haag <maximilian.haag@gsi.uni-muenchen.de>
+Description: Package to prepare and and parse raw euplexdb dataset output
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+Imports:
+    lubridate,
+    gtools,
+    dplyr
+
