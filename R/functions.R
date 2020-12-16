@@ -13,7 +13,7 @@ reformat_logical_variables <- function(df){
     df[df==""] <- NA
 
     for(col in 1:NCOL(df)){
-        if (all(df[,col]=="TRUE" | df[,col]=="FALSE" | is.na(df[,col]))){
+        if (all(tolower(df[,col])=="true" | tolower(df[,col])=="false" | df[,col]=="" | is.na(df[,col]))){
             df[,col] <- as.logical(df[,col])
         }
     }
