@@ -1,6 +1,14 @@
 # euplexdataR
 R package for working with raw euplexdb data
 
+Currently, the package can perform the following data processing tasks:
+
+- format date variables to the `Date` format
+- create procedure type dummy variables
+- format logical variables from char to logical
+- create event and doc variables for `_proposal_` and `_final_`
+
+
 ## Installation
 
 To install the package, run the following code in the R console:

@@ -1,6 +1,6 @@
 euplexdata <- function (df){
 
-    # @TODO: make into proper class, inherit from df?
+    # @TODO: make into proper class?
     # @TODO: add special option to determine last event codes etc
 
     df %>%
