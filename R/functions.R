@@ -45,8 +45,14 @@ create_named_procedure_event_variables <- function(df, event_codes = c(), event_
 
     # Codes must be supplied in the reverse order they appear in the legislative process (last possible first)!
 
+    if ('procedure_id' %in% names(df)){
+        merge_by = "procedure_id"
+    }else{
+        merge_by = "procedure_reference_0"
+    }
+
     # create a dataframe containing only the variables of interest
-    df_events <- df[, c("procedure_reference_0", unlist(sapply(event_codes, function(x) grep(x,names(df), value=TRUE), simplify="array")))]
+    df_events <- df[, c(merge_by, unlist(sapply(event_codes, function(x) grep(x,names(df), value=TRUE), simplify="array")))]
 
 
     # some last corrections to allow for errorless bind_rows below
@@ -54,6 +60,8 @@ create_named_procedure_event_variables <- function(df, event_codes = c(), event_
 
     rows <- list()
     j <- 1
+
+
 
     # for every row
     for(i in 1:NROW(df_events)){
@@ -66,7 +74,7 @@ create_named_procedure_event_variables <- function(df, event_codes = c(), event_
                 names(df_row) <- gsub(code, event_name, names(df_row))
                 df_row$e_code <- code
                 # add _vars_ from df_row to df_final
-                rows[[j]] <- df_row[,c("procedure_reference_0", grep(event_name, names(df_row), value = TRUE))]
+                rows[[j]] <- df_row[,c(merge_by, grep(event_name, names(df_row), value = TRUE))]
                 j <- j + 1
                 # break event code for-loop to continue with next row
                 break
@@ -77,11 +85,7 @@ create_named_procedure_event_variables <- function(df, event_codes = c(), event_
     df_rows <- dplyr::bind_rows(rows)
 
 
-    if ('procedure_id' %in% names(df)){
-        merge_by = "procedure_id"
-    }else{
-        merge_by = "procedure_reference_0"
-    }
+
 
     # return warning if merge variable is not unique
     if(any(duplicated(df[[merge_by]]))){
