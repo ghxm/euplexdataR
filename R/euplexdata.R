@@ -1,9 +1,7 @@
+# Main euplexdata function
 
 #' @export
 euplexdata <- function (df){
-
-    # @TODO: make into proper class?
-    # @TODO: add special option to determine last event codes etc
 
     df %>%
         reformat_date_variables() %>%
