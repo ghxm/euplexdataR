@@ -3,6 +3,7 @@
 export("%>%")
 export(create_named_procedure_event_variables)
 export(create_procedure_type_dummies)
+export(euplexdata)
 export(reformat_date_variables)
 export(reformat_logical_variables)
 importFrom(magrittr,"%>%")

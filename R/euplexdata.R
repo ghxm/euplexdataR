@@ -1,5 +1,5 @@
 
-
+#' @export
 euplexdata <- function (df){
 
     # @TODO: make into proper class?
