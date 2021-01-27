@@ -14,8 +14,10 @@ reformat_logical_variables <- function(df){
     df[df==""] <- NA
 
     for(col in 1:NCOL(df)){
-        if (all(tolower(df[,col])=="true" | tolower(df[,col])=="false" | df[,col]=="" | is.na(df[,col]))){
-            df[,col] <- as.logical(df[,col])
+        if (!grepl("_date$", names(df)[col])){
+            if (all((is.character(df[,col]))&&(is.na(df[,col]) | tolower(df[,col])=="true" | tolower(df[,col])=="false" | df[,col]==""))){
+                df[,col] <- as.logical(df[,col])
+            }
         }
     }
 
