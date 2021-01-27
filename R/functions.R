@@ -4,7 +4,7 @@ library(dplyr)
 
 #' @export
 reformat_date_variables <- function(df){
-    df[,grep("_date$", names(df))] <- apply(df[,grep("_date$", names(df))], 2, function(x) lubridate::as_date(x))
+    df[,grep("_date$", names(df))] <- lapply(df[,grep("_date$", names(df))], function(x) lubridate::as_date(x))
 
     df
 }
