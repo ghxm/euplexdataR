@@ -10,8 +10,6 @@ reformat_missing_data <- function(df){
     df
 }
 
-df[df==""] <- NA
-
 
 #' @export
 reformat_date_variables <- function(df){
