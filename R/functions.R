@@ -54,6 +54,9 @@ create_procedure_type_dummies <- function(df){
 #' @export
 create_named_procedure_event_variables <- function(df, event_codes = c(), event_name  = c()){
 
+    # @TODO
+    # merge variables other dan legal_date for multi-event-code events (e.g. final)
+
     # Codes must be supplied in the reverse order they appear in the legislative process (last possible first)!
 
     if ('procedure_id' %in% names(df)){
@@ -71,7 +74,6 @@ create_named_procedure_event_variables <- function(df, event_codes = c(), event_
 
     rows <- list()
     j <- 1
-
 
 
     # for every row
@@ -95,13 +97,29 @@ create_named_procedure_event_variables <- function(df, event_codes = c(), event_
 
     df_rows <- dplyr::bind_rows(rows)
 
-
-
-
     # return warning if merge variable is not unique
     if(any(duplicated(df[[merge_by]]))){
         warning(paste("Named event results are not reliable: variable", merge_by, "not unique across rows! Please remove duplicates or use a newer dataset version."))
     }
 
     merge(df, df_rows, all.x=TRUE, by = merge_by)
+}
+
+#' @export
+remove_na_variables <- function(df){
+    df[, colSums(is.na(df)) != nrow(df)]
+}
+
+#' @export
+remove_raw_variables <- function(df){
+    df[,!grepl("^doc__|e__", names(df))]
+}
+
+#' @export
+remove_extra_variables <- function(df){
+
+    df %>%
+        remove_na_variables() %>%
+        remove_raw_variables()
+
 }
