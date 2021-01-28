@@ -4,7 +4,6 @@ library(dplyr)
 
 #' @export
 reformat_missing_data <- function(df){
-
     df[df==""] <- NA
 
     df
@@ -23,7 +22,7 @@ reformat_logical_variables <- function(df){
 
     for(col in 1:NCOL(df)){
         if (!grepl("_date$", names(df)[col])){
-            if (all((is.character(df[,col]))&&(is.na(df[,col]) | tolower(df[,col])=="true" | tolower(df[,col])=="false" | df[,col]==""))){
+            if (all((is.character(df[,col]))&(is.na(df[,col]) | tolower(df[,col])=="true" | tolower(df[,col])=="false" | df[,col]==""))){
                 df[,col] <- as.logical(df[,col])
             }
         }
@@ -117,7 +116,6 @@ remove_raw_variables <- function(df){
 
 #' @export
 remove_extra_variables <- function(df){
-
     df %>%
         remove_na_variables() %>%
         remove_raw_variables()
