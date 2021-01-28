@@ -4,6 +4,7 @@
 euplexdata <- function (df){
 
     df %>%
+        reformat_missing_data() %>%
         reformat_date_variables() %>%
         create_procedure_type_dummies() %>%
         reformat_logical_variables() %>%

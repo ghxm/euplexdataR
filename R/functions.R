@@ -3,6 +3,17 @@ library(dplyr)
 # Functions to wrangle raw euplexdb datasets
 
 #' @export
+reformat_missing_data <- function(df){
+
+    df[df==""] <- NA
+
+    df
+}
+
+df[df==""] <- NA
+
+
+#' @export
 reformat_date_variables <- function(df){
     df[,grep("_date$", names(df))] <- lapply(df[,grep("_date$", names(df))], function(x) lubridate::as_date(x))
 
@@ -11,7 +22,6 @@ reformat_date_variables <- function(df){
 
 #' @export
 reformat_logical_variables <- function(df){
-    df[df==""] <- NA
 
     for(col in 1:NCOL(df)){
         if (!grepl("_date$", names(df)[col])){

@@ -4,3 +4,4 @@
 .Ruserdata
 renv
 R/hello.R
+*_local*
