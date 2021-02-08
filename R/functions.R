@@ -1,5 +1,7 @@
 library(dplyr)
 
+complexity_varnames <- c("flesch_kincaid_grade_level", "lix", "ref_ext_enacting", "structural_size_enacting", "word_entropy", "citation_count", "dale_chall", "flesch_kincaid_reading_ease", "ref_int_enacting", "smog", "word_count", "word_entropy_l", "article_count", "coleman_liau_index", "forcast", "recital_count", "structural_size", "word_count_noannex", "avg_depth")
+
 # Functions to wrangle raw euplexdb datasets
 
 #' @export
@@ -121,3 +123,88 @@ remove_extra_variables <- function(df){
         remove_raw_variables()
 
 }
+
+
+#' @export
+order_varibales <- function(df){
+
+    # 1. procedure id
+    # 2. procedure reference
+    # 3. everything else
+    # 4. event
+    # 5. doc-event
+
+}
+
+#' @export
+apply_correction_data <- function(df){
+
+    df[which(df$doc_proposal_uri_celex == "52008PC0458"),]$doc_proposal_procedure_subtype <- "Recast"
+    df[which(df$doc_proposal_uri_celex == "51997PC0368"),]$doc_proposal__bad_formatting <- TRUE
+
+    df
+
+
+}
+
+#' @export
+set_bad_formatting_observations_na <- function(df){
+
+    bad_formatting_varnames <- grep("bad_formatting$", names(df), value=TRUE)
+
+    for(i in NROW(bad_formatting_varnames)){
+        varname_prefix <- strsplit(bad_formatting_varnames[i], "_bad_formatting")[[1]]
+        doc_complexity_vars <- paste0(varname_prefix, complexity_varnames)
+        df[which(df[, bad_formatting_varnames[i]]), doc_complexity_vars] <- NA
+    }
+
+    df
+
+}
+
+#' @export
+set_recast_observations_na <- function(df){
+
+    leg_proc_subtype_varnames <- grep("procedure_subtype$", names(df), value=TRUE)
+
+
+    for(i in NROW(leg_proc_subtype_varnames)){
+        varname_prefix <- strsplit(leg_proc_subtype_varnames[i], "procedure_subtype")[[1]]
+        doc_complexity_vars <- paste0(varname_prefix, complexity_varnames)
+        df[which(df[, leg_proc_subtype_varnames[i]]=="Recast"), doc_complexity_vars] <- NA
+    }
+
+    df
+
+}
+
+#' @export
+keep_only<- function(df, keep = c("proposal"), long = FALSE){
+    # @TODO
+}
+
+
+
+#' @export
+generate_public_dataset <- function(df){
+
+    df <- df %>%
+        set_bad_formatting_observations_na() %>%
+        set_recast_observations_na()
+
+    df
+
+}
+
+#' @export
+long <- function(df, event_names = list(), doc_names = list()){
+
+    # event name should be named list of "wide-eventvarname": long name
+    # doc name should be named list of "wide-eventvarname": wide-docvarname (empty if main)
+
+    # for each event name-doc combination, 1 row
+
+    # @TODO: may be best to split and merge
+
+}
+
