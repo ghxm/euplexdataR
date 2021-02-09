@@ -203,20 +203,6 @@ create_complete_cases_variable <- function(df, vars = "complexity"){
 }
 
 
-#' @export
-public_dataset <- function(df){
-
-    df <- df %>%
-        set_bad_formatting_observations_na() %>%
-        set_recast_observations_na() %>%
-        create_complete_cases_variable(vars="all") %>%
-        create_complete_cases_variable(vars="complexity") %>%
-        order_varibales()
-
-    df
-
-}
-
 
 
 #' @export
