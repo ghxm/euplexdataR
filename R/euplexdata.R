@@ -12,6 +12,7 @@ euplexdata <- function (df, remove_extra_vars=TRUE){
         apply_correction_data() %>%
         {if(remove_extra_vars) remove_extra_variables(.) else .}
 
+    df
 }
 
 
@@ -25,5 +26,7 @@ public_dataset <- function(df, events = c("proposal", "final"), docs =  c("propo
         create_complete_cases_variable(vars="all") %>%
         create_complete_cases_variable(vars="complexity") %>%
         order_variables()
+
+    df
 
 }
