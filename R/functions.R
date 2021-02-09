@@ -118,10 +118,11 @@ remove_raw_variables <- function(df){
 
 #' @export
 remove_extra_variables <- function(df){
-    df %>%
+    df <- df %>%
         remove_na_variables() %>%
         remove_raw_variables()
 
+    df
 }
 
 
