@@ -16,14 +16,14 @@ euplexdata <- function (df, remove_extra_vars=TRUE){
 
 
 #' @export
-public_dataset <- function(df){
+public_dataset <- function(df, events = c("proposal", "final"), docs =  c("proposal")){
 
     df %>%
         set_bad_formatting_observations_na() %>%
         set_recast_observations_na() %>%
+        keep_only(keep_events = events, keep_docs = docs) %>%
         create_complete_cases_variable(vars="all") %>%
         create_complete_cases_variable(vars="complexity") %>%
-        order_varibales()
-
+        order_variables()
 
 }

@@ -153,7 +153,7 @@ set_bad_formatting_observations_na <- function(df){
 
     bad_formatting_varnames <- grep("bad_formatting$", names(df), value=TRUE)
 
-    for(i in NROW(bad_formatting_varnames)){
+    for(i in 1:NROW(bad_formatting_varnames)){
         varname_prefix <- strsplit(bad_formatting_varnames[i], "_bad_formatting")[[1]]
         doc_complexity_vars <- paste0(varname_prefix, complexity_varnames)
         df[which(df[, bad_formatting_varnames[i]]), doc_complexity_vars] <- NA
@@ -169,7 +169,7 @@ set_recast_observations_na <- function(df){
     leg_proc_subtype_varnames <- grep("procedure_subtype$", names(df), value=TRUE)
 
 
-    for(i in NROW(leg_proc_subtype_varnames)){
+    for(i in 1:NROW(leg_proc_subtype_varnames)){
         varname_prefix <- strsplit(leg_proc_subtype_varnames[i], "procedure_subtype")[[1]]
         doc_complexity_vars <- paste0(varname_prefix, complexity_varnames)
         df[which(df[, leg_proc_subtype_varnames[i]]=="Recast"), doc_complexity_vars] <- NA
@@ -185,21 +185,23 @@ keep_only<- function(df, keep_events = c("proposal", "final"),  keep_docs = c("p
     if(!long){
         event_varnames <- grep("^e_", names(df), value = TRUE)
         keep_event_varnames <- c()
-        for (i in NROW(keep_events)){
-            keep_event_varnames <- c(keep_event_varnames, grep(paste0("e_", keep_events[i]), event_varnames, value = TRUE))
+        for (i in 1:NROW(keep_events)){
+            keep_event_varnames <- c(keep_event_varnames, grep(paste0("^e_", keep_events[i]), event_varnames, value = TRUE))
         }
-        drop_event_varnames <- event_varnames[event_varnames %in% keep_event_varnames]
+        drop_event_varnames <- event_varnames[!event_varnames %in% keep_event_varnames]
 
         doc_varnames <- grep("^doc_", names(df), value = TRUE)
         keep_doc_varnames <- c()
-        for (i in NROW(keep_docs)){
+        for (i in 1:NROW(keep_docs)){
             keep_doc_varnames <- c(keep_doc_varnames, grep(paste0("doc_", keep_docs[i]), doc_varnames, value = TRUE))
         }
-        drop_doc_varnames <- doc_varnames[-keep_doc_varnames]
+        drop_doc_varnames <- doc_varnames[!doc_varnames %in% keep_doc_varnames]
 
-        df <- df[,-c(drop_event_varnames, drop_doc_varnames)]
+        df <- df[,!names(df) %in% c(drop_event_varnames, drop_doc_varnames)]
 
     }
+
+    df
 }
 
 
