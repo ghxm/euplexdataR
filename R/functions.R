@@ -186,15 +186,38 @@ keep_only<- function(df, keep = c("proposal"), long = FALSE){
 
 
 #' @export
-generate_public_dataset <- function(df){
+create_complete_cases_variable <- function(df, vars = "complexity"){
+
+    if(vars=="all"){
+        df$complete <- complete.cases(df)
+
+    }
+
+    if(vars=="complexity"){
+        vars_check_list <- unique(unlist(sapply(complexity_varnames, function(x) grep(x, names(df), value=TRUE))))
+        df$complete_complexity <- complete.cases(df[, vars_check_list])
+    }
+
+
+    df
+}
+
+
+#' @export
+public_dataset <- function(df){
 
     df <- df %>%
         set_bad_formatting_observations_na() %>%
-        set_recast_observations_na()
+        set_recast_observations_na() %>%
+        create_complete_cases_variable(vars="all") %>%
+        create_complete_cases_variable(vars="complexity") %>%
+        order_varibales()
 
     df
 
 }
+
+
 
 #' @export
 long <- function(df, event_names = list(), doc_names = list()){
