@@ -3,7 +3,7 @@
 #' @export
 euplexdata <- function (df, remove_extra_vars=TRUE){
 
-    df %>%
+    df <- df %>%
         reformat_missing_data() %>%
         reformat_date_variables() %>%
         reformat_logical_variables() %>%
@@ -19,7 +19,7 @@ euplexdata <- function (df, remove_extra_vars=TRUE){
 #' @export
 public_dataset <- function(df, events = c("proposal", "final"), docs =  c("proposal")){
 
-    df %>%
+    df <- df %>%
         set_bad_formatting_observations_na() %>%
         set_recast_observations_na() %>%
         keep_only(keep_events = events, keep_docs = docs) %>%
