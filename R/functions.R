@@ -126,7 +126,7 @@ remove_extra_variables <- function(df){
 
 
 #' @export
-order_varibales <- function(df){
+order_variables <- function(df){
 
     # 1. procedure id
     # 2. procedure reference
@@ -134,6 +134,7 @@ order_varibales <- function(df){
     # 4. event
     # 5. doc-event
 
+    df
 }
 
 #' @export
@@ -179,8 +180,26 @@ set_recast_observations_na <- function(df){
 }
 
 #' @export
-keep_only<- function(df, keep = c("proposal"), long = FALSE){
-    # @TODO
+keep_only<- function(df, keep_events = c("proposal", "final"),  keep_docs = c("proposal"), long = FALSE){
+
+    if(!long){
+        event_varnames <- grep("^e_", names(df), value = TRUE)
+        keep_event_varnames <- c()
+        for (i in NROW(keep_events)){
+            keep_event_varnames <- c(keep_event_varnames, grep(paste0("e_", keep_events[i]), event_varnames, value = TRUE))
+        }
+        drop_event_varnames <- event_varnames[event_varnames %in% keep_event_varnames]
+
+        doc_varnames <- grep("^doc_", names(df), value = TRUE)
+        keep_doc_varnames <- c()
+        for (i in NROW(keep_docs)){
+            keep_doc_varnames <- c(keep_doc_varnames, grep(paste0("doc_", keep_docs[i]), doc_varnames, value = TRUE))
+        }
+        drop_doc_varnames <- doc_varnames[-keep_doc_varnames]
+
+        df <- df[,-c(drop_event_varnames, drop_doc_varnames)]
+
+    }
 }
 
 
