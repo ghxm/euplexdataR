@@ -1,6 +1,8 @@
 library(dplyr)
 
-complexity_varnames <- c("flesch_kincaid_grade_level", "lix", "ref_ext_enacting", "structural_size_enacting", "word_entropy", "citation_count", "dale_chall", "flesch_kincaid_reading_ease", "ref_int_enacting", "smog", "word_count", "word_entropy_l", "article_count", "coleman_liau_index", "forcast", "recital_count", "structural_size", "word_count_noannex", "avg_depth")
+complexity_varnames <- sort(c("flesch_kincaid_grade_level", "lix", "ref_ext_enacting", "structural_size_enacting", "word_entropy", "citation_count", "dale_chall", "flesch_kincaid_reading_ease", "ref_int_enacting", "smog", "word_count", "word_entropy_l", "article_count", "coleman_liau_index", "forcast", "recital_count", "structural_size", "word_count_noannex", "avg_depth"))
+
+complexity_varnames_core <- sort(c("lix", "ref_", "structural_size", "word_entropy", "citation_count", "word_count", "word_entropy_l", "article_count", "recital_count", "structural_size", "word_count_noannex", "avg_depth"))
 
 # Functions to wrangle raw euplexdb datasets
 
@@ -208,7 +210,11 @@ keep_only<- function(df, keep_events = c("proposal", "final"),  keep_docs = c("p
 
 
 #' @export
-create_complete_cases_variable <- function(df, vars = "complexity"){
+create_complete_cases_variable <- function(df, vars = "complexity", doc = "all"){
+
+    if(is_long(df)){
+        warning("This function currently only detects complete cases for wide-format data!")
+    }
 
     if(vars=="all"){
         df$complete <- complete.cases(df)
@@ -216,26 +222,17 @@ create_complete_cases_variable <- function(df, vars = "complexity"){
     }
 
     if(vars=="complexity"){
+        if(doc=="all"){
         vars_check_list <- unique(unlist(sapply(complexity_varnames, function(x) grep(x, names(df), value=TRUE))))
         df$complete_complexity <- complete.cases(df[, vars_check_list])
-    }
 
+        }else{
+            vars_check_list <- unique(unlist(sapply(complexity_varnames, function(x) grep(paste0(doc, ".*", x), names(df), value=TRUE))))
+            df[,paste0("doc_", doc, "_complete_complexity")] <- complete.cases(df[, vars_check_list])
+        }
+
+
+    }
 
     df
 }
-
-
-
-
-#' @export
-long <- function(df, event_names = list(), doc_names = list()){
-
-    # event name should be named list of "wide-eventvarname": long name
-    # doc name should be named list of "wide-eventvarname": wide-docvarname (empty if main)
-
-    # for each event name-doc combination, 1 row
-
-    # @TODO: may be best to split and merge
-
-}
-

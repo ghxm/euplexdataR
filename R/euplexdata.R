@@ -24,7 +24,7 @@ public_dataset <- function(df, events = c("proposal", "final"), docs =  c("propo
         set_recast_observations_na() %>%
         keep_only(keep_events = events, keep_docs = docs) %>%
         create_complete_cases_variable(vars="all") %>%
-        create_complete_cases_variable(vars="complexity") %>%
+        create_complete_cases_variable(vars="complexity", doc = "proposal") %>%
         order_variables()
 
     df
