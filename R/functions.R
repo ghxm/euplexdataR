@@ -1,8 +1,52 @@
 library(dplyr)
 
-complexity_varnames <- sort(c("flesch_kincaid_grade_level", "lix", "ref_ext_enacting", "structural_size_enacting", "word_entropy", "citation_count", "dale_chall", "flesch_kincaid_reading_ease", "ref_int_enacting", "smog", "word_count", "word_entropy_l", "article_count", "coleman_liau_index", "forcast", "recital_count", "structural_size", "word_count_noannex", "avg_depth"))
+complexity_varnames_noncore <- sort(c("flesch_kincaid_grade_level", "lix", "dale_chall", "flesch_kincaid_reading_ease", "smog", "coleman_liau_index", "forcast"))
 
-complexity_varnames_core <- sort(c("lix", "ref_", "structural_size", "word_entropy", "citation_count", "word_count", "word_entropy_l", "article_count", "recital_count", "structural_size", "word_count_noannex", "avg_depth"))
+complexity_varnames_core <- sort(c("lix", "ref_", "structural_size", "word_entropy", "citation_count", "citations", "word_count", "words", "word_entropy_l", "article_count", "articles", "recital_count", "recitals", "structural_size", "struct_size", "word_count_noannex", "words_noannex", "avg_depth"))
+
+complexity_varnames <- sort(unique(c(complexity_varnames_noncore, complexity_varnames_core)))
+
+df_complexity_varnames <- function(df, complexity_vars = "all"){
+    if(complexity_vars == "all"){
+        complexity_varnames <- complexity_varnames
+    } else if (complexity_vars == "core"){
+        complexity_varnames <- complexity_varnames_core
+    }
+
+    unique(unlist(sapply(complexity_varnames, function(x) grep(paste0(doc, ".*", x), names(df), value=TRUE))))
+}
+
+df_doc_types <- function(df, add_underscore_to_raw = FALSE, underscore = "_"){
+    type_matches <- stringr::str_match(names(df), "doc_[_]*((?:[a-zA-Z_0-9]*)(?=__)|(?:[a-z]*)(?=_))_[_]*(.*)")[,2]
+    type_matches <- unique(type_matches[!is.na(type_matches)])
+    types <- gsub("_$", "", type_matches)
+    if(add_underscore_to_raw){
+        for(i in 1:NROW(types)){
+            type <- types[i]
+            if (grepl("_", type)){
+                types[i] <- paste0(underscore, type, underscore)
+            }
+        }
+    }
+    types
+}
+
+create_complexity_variables <- function(df){
+    # Relative ref vars
+    if(!is_long(df)){
+        doc_types <- df_doc_types(df, add_underscore_to_raw = TRUE, underscore = "__")
+        for(i in 1:NROW(doc_types)){
+            doc_type <- doc_types[i]
+            df[, paste0("doc_", doc_type ,"_ref_ext_enacting_rel")] <- df[, grep(paste0(doc_type, ".*", "ref_ext_enacting$"), names(df))] / df[, grep(paste0(doc_type, ".*", "(article_count|articles)$"), names(df))]
+            df[, paste0("doc_", doc_type ,"_ref_int_enacting_rel")] <- df[, grep(paste0(doc_type, ".*", "ref_int_enacting$"), names(df))] / df[, grep(paste0(doc_type, ".*", "(article_count|articles)$"), names(df))]
+        }
+    }else{
+        df$doc_ref_ext_enacting_rel <- df[, grep("ref_ext_enacting$", names(df))] / df[, grep("(article_count|articles)$", names(df))]
+        df$doc_ref_int_enacting_rel <- df[, grep("ref_int_enacting$", names(df))] / df[, grep("(article_count|articles)$", names(df))]
+
+    }
+    df
+}
 
 # Functions to wrangle raw euplexdb datasets
 
@@ -35,24 +79,6 @@ reformat_logical_variables <- function(df){
     df
 }
 
-#' @export
-create_procedure_type_dummies <- function(df){
-    # create procedure type dummies
-    df$cod <- ifelse(df$procedure_type_0=="COD", 1, 0)
-    df$cns  <- ifelse(df$procedure_type_0=="CNS", 1, 0)
-
-    df
-}
-
-#' @export
-create_procedure_type_dummies <- function(df){
-    # create procedure_type dummies
-    df$regulation <- ifelse(df$doc__ADP_byCOM__legislative_instrument=="Regulation", 1, 0)
-    df$directive <- ifelse(df$doc__ADP_byCOM__legislative_instrument=="Directive", 1, 0)
-    df$decision <- ifelse(df$doc__ADP_byCOM__legislative_instrument== "Decision", 1, 0)
-
-    df
-}
 
 #' @export
 create_named_procedure_event_variables <- function(df, event_codes = c(), event_name  = c()){
@@ -157,8 +183,7 @@ set_bad_formatting_observations_na <- function(df){
     bad_formatting_varnames <- grep("bad_formatting$", names(df), value=TRUE)
 
     for(i in 1:NROW(bad_formatting_varnames)){
-        varname_prefix <- strsplit(bad_formatting_varnames[i], "_bad_formatting")[[1]]
-        doc_complexity_vars <- paste0(varname_prefix, complexity_varnames)
+        doc_complexity_vars <- df_complexity_varnames(df, complexity_vars = "all")
         df[which(df[, bad_formatting_varnames[i]]), doc_complexity_vars] <- NA
     }
 
@@ -173,8 +198,7 @@ set_recast_observations_na <- function(df){
 
 
     for(i in 1:NROW(leg_proc_subtype_varnames)){
-        varname_prefix <- strsplit(leg_proc_subtype_varnames[i], "procedure_subtype")[[1]]
-        doc_complexity_vars <- paste0(varname_prefix, complexity_varnames)
+        doc_complexity_vars <- df_complexity_varnames(df, complexity_vars = "all")
         df[which(df[, leg_proc_subtype_varnames[i]]=="Recast"), doc_complexity_vars] <- NA
     }
 
@@ -210,7 +234,7 @@ keep_only<- function(df, keep_events = c("proposal", "final"),  keep_docs = c("p
 
 
 #' @export
-create_complete_cases_variable <- function(df, vars = "complexity", doc = "all"){
+create_complete_cases_variable <- function(df, vars = "complexity_core", doc = "all"){
 
     if(is_long(df)){
         warning("This function currently only detects complete cases for wide-format data!")
@@ -221,18 +245,73 @@ create_complete_cases_variable <- function(df, vars = "complexity", doc = "all")
 
     }
 
-    if(vars=="complexity"){
+    if(vars=="complexity_core"){
         if(doc=="all"){
-        vars_check_list <- unique(unlist(sapply(complexity_varnames, function(x) grep(x, names(df), value=TRUE))))
+        vars_check_list <- df_complexity_varnames(df, complexity_vars = "all")
         df$complete_complexity <- complete.cases(df[, vars_check_list])
 
         }else{
-            vars_check_list <- unique(unlist(sapply(complexity_varnames, function(x) grep(paste0(doc, ".*", x), names(df), value=TRUE))))
+            vars_check_list <- df_complexity_varnames(df, complexity_vars = "core")
             df[,paste0("doc_", doc, "_complete_complexity")] <- complete.cases(df[, vars_check_list])
         }
 
 
     }
+
+    df
+}
+
+#' @export
+rename_variables <- function(df, rm_lone_num_suffix = TRUE){
+    df <- df %>%
+        rename_count_variables() %>%
+        rename_dot_variables() %>%
+        shorten_varnames() %>%
+        {if(rm_lone_num_suffix) rename_num_suffix_variables(.) else .}
+    df
+}
+
+#' @export
+rename_num_suffix_variables <- function(df){
+    num_suffix_names <- grep("_[0-9]+$", names(df), value=TRUE)
+    num_suffix_names <- gsub("_[0-9]+$", "", num_suffix_names)
+    num_suffix_names_tab <- table(num_suffix_names)
+    lone_num_suffix_names <- sapply(names(num_suffix_names_tab), function(x) {if(num_suffix_names_tab[x] == 1) x else NA})
+    lone_num_suffix_names <- lone_num_suffix_names[!is.na(lone_num_suffix_names)]
+
+    if(NROW(lone_num_suffix_names)>0){
+        for (i in 1:NROW(lone_num_suffix_names)){
+            varname <- lone_num_suffix_names[i]
+            names(df)[(grepl(paste0(varname, "_[0-9]+$"), names(df)))] <- varname
+        }
+    }
+
+    df
+}
+
+#' @export
+rename_count_variables <- function(df){
+    names(df) <- gsub("_count", "s", names(df))
+    df
+}
+
+#' @export
+rename_dot_variables <- function(df){
+    names(df) <- gsub("\\.", "_", names(df), perl = TRUE)
+    df
+}
+
+#' @export
+shorten_varnames <- function(df){
+
+    # structural to struct
+    names(df) <- gsub("structural_", "struct_", names(df))
+
+    # proposal to prop
+    names(df) <- gsub("legislative_instrument", "leg_instr", names(df))
+
+    names(df) <- gsub("kincaid_", "", names(df))
+
 
     df
 }

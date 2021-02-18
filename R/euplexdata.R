@@ -1,7 +1,7 @@
 # Main euplexdata function
 
 #' @export
-euplexdata <- function (df, remove_extra_vars=TRUE){
+euplexdata <- function (df, remove_extra_vars=TRUE, rename_vars = TRUE){
 
     df <- df %>%
         reformat_missing_data() %>%
@@ -10,7 +10,11 @@ euplexdata <- function (df, remove_extra_vars=TRUE){
         create_named_procedure_event_variables(event_name = "final", event_codes = c("_PUB_OJ_", "_SIGN_byEP_CONSIL_", "_ADP_FRM_byCONSIL_")) %>%
         create_named_procedure_event_variables(event_name = "proposal", event_codes = c("_ADP_byCOM_")) %>%
         apply_correction_data() %>%
-        {if(remove_extra_vars) remove_extra_variables(.) else .}
+        {if(remove_extra_vars) remove_extra_variables(.) else .} %>%
+        {if(rename_vars) rename_variables(.) else .} %>%
+        create_complexity_variables()
+
+    df$X <- NULL
 
     df
 }
@@ -24,7 +28,8 @@ public_dataset <- function(df, events = c("proposal", "final"), docs =  c("propo
         set_recast_observations_na() %>%
         keep_only(keep_events = events, keep_docs = docs) %>%
         create_complete_cases_variable(vars="all") %>%
-        create_complete_cases_variable(vars="complexity", doc = "proposal") %>%
+        create_complete_cases_variable(vars="complexity_core", doc = "proposal") %>%
+        remove_extra_variables %>%
         order_variables()
 
     df

@@ -8,6 +8,8 @@ Description: Package to prepare and and parse raw euplexdb dataset output
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
+Remotes:
+    djrnold/stataXml
 Imports:
     lubridate,
     gtools,
