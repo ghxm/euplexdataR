@@ -11,6 +11,8 @@ df_complexity_varnames <- function(df, complexity_vars = "all"){
         complexity_varnames <- complexity_varnames
     } else if (complexity_vars == "core"){
         complexity_varnames <- complexity_varnames_core
+    } else if(nchar(complexity_vars)>0){
+        complexity_varnames <- grep(complexity_vars, complexity_varnames, value = TRUE)
     }
 
     unique(unlist(sapply(complexity_varnames, function(x) grep(paste0(doc, ".*", x), names(df), value=TRUE))))

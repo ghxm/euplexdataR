@@ -11,7 +11,60 @@ print_header <- function(text, simple = FALSE){
 }
 
 #' @export
-data_report <- function(df, report = "all"){
+inspect_complexity_data <- function(df, probs = c(0.999,1), head = NA, cutoffs = c(NA,NA), decreasing = TRUE, docs = c("proposal"), complexity_vars = "core", display = c(), amending = "exclude", complete_only = TRUE){
+
+    vars_inspect <- df_complexity_varnames(df,complexity_vars = complexity_vars)
+    doc_types <- df_doc_types(df)
+
+    if(!is.vector(docs)){
+        docs = c(docs)
+    }
+
+
+    doc_types <- doc_types[doc_types %in% docs]
+
+    for(i in 1:NROW(docs)){
+        doc <- doc_types[i]
+        df_inspect <- df
+        # subset complete only
+        if(complete_only){
+            df_inspect <- df[which(df[,paste0("doc_", doc, "_complete_complexity")]),]
+        }
+
+        # subset amending
+        if(amending=="exclude"){
+            df_inspect <- df_inspect[which(!df_inspect[,paste0("doc_", doc, "_amending")]),]
+        }
+
+        for(j in 1:NROW(vars_inspect)){
+            var <- vars_inspect[j]
+
+            print_header(var, simple = TRUE)
+
+            # sort by var
+            df_inspect <- df_inspect[order(df_inspect[,var], decreasing = decreasing, na.last = TRUE),]
+
+            if(is.na(head)){
+                if(any(is.na(cutoffs))){
+                    # calculate quantiles
+                    cut <- quantile(df_inspect[, var], probs = probs, na.rm =TRUE)
+                } else {
+                    cut <- cutoffs
+                }
+            df_inspect_cut <- df_inspect[which(df_inspect[,var]>=cut[1] & df_inspect[,var]<=cut[2]),]
+            }else {
+                df_inspect_cut <- head(df_inspect, n = head)
+            }
+
+            print(observations(df_inspect_cut, display = c(display, var), docs = c(doc), events = c(doc)))
+
+        }
+    }
+
+    # loop through complexity vars
+
+    # display data between cutoff sorted
+
 
 
 }
