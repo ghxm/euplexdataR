@@ -1,4 +1,4 @@
-generate_hand_coding_samples <- function(df, out = NULL, n_coders = NULL, coder_names = c(), sample_size = 100, overlap = 3, doc = c("proposal"), hand_coding_vars = c("recitals", "citations", "articles", "ref_int_enacting", "ref_ext_enacting", '_bad_formatting', "comments")){
+generate_hand_coding_samples <- function(df, out = NULL, n_coders = NULL, coder_names = c(), sample_size = 100, overlap = 3, doc = c("proposal"), hand_coding_vars = c("citations", "recitals", "articles", "ref_int_enacting", "ref_ext_enacting", '_bad_formatting', "comments")){
 
     if(is_long(df)){
         stop("This function currently only works for wide-format data! Please convert first.")
@@ -32,11 +32,24 @@ generate_hand_coding_samples <- function(df, out = NULL, n_coders = NULL, coder_
     # assign samples minus overlap to coders
     df_samples$coder <- as.character(rep(coder_names, length.out = NROW(df_samples),each = as.integer(NROW(df_samples) / n_coders)))
 
-    coding_samples <- split(df_samples, f=df_samples$coder)
+    # add urls
+    if(any(is.na(df_samples$doc_proposal_uri_celex))){
+        warning("Some CELEX IDs are NA. This function currently only works with CELEX IDs. Please check your input data!")
+    }
+
+    df_samples$url <- paste0("https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=" , df_samples$doc_proposal_uri_celex, "&from=EN")
+
+
+    # order variables, remove unnecessary
+    df_samples_sparse <- df_samples[, c("ID", "url", unlist(sapply(hand_coding_vars, function(x) grep(x, names(df_samples), value = TRUE))))]
+
+    coding_samples <- split(df_samples_sparse, f=df_samples$coder)
+
 
     # add overlap samples
 
     coding_samples <- lapply(coding_samples, function(x) dplyr::bind_rows(x[,!names(x) %in% c("coder")], df_samples_overlap))
+
 
     # save ID - CELEX - procedure_id table
     id_table <- dplyr::bind_rows(df_samples, df_samples_overlap)
