@@ -9,3 +9,4 @@ R/hello.R
 proc_doc*
 *.zip
 *.dta
+.DS*
