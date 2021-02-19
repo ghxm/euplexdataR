@@ -167,7 +167,6 @@ data_summary_report <- function(df){
 
 }
 
-#' @import lubridate
 #' @export
 data_doc_coverage_report <- function(df, doc = "proposal", time = "year"){
 
@@ -183,7 +182,6 @@ data_doc_coverage_report <- function(df, doc = "proposal", time = "year"){
 
 
 #' @export
-#' @import stargazer
 data_complexity_variables_report <- function(df, doc = "proposal", vars = "core"){
 
     print_header(paste("Variable summary for", vars, doc, "complexity variables"), simple = TRUE)
