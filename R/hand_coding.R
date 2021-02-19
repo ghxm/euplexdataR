@@ -18,7 +18,7 @@ generate_hand_coding_samples <- function(df, out = NULL, n_coders = NULL, coder_
     # draw samples, assign IDs
     df_samples <- dplyr::sample_n(df, size = sample_size, replace = FALSE) %>%
         dplyr::select("procedure_id", paste0("doc_", doc, "_uri_celex")) %>%
-        dplyr::mutate(ID = row_number())
+        dplyr::mutate(ID = dplyr::row_number())
 
     df_samples[, paste0("doc_", doc, "_", hand_coding_vars)] <- NA
 
@@ -41,7 +41,7 @@ generate_hand_coding_samples <- function(df, out = NULL, n_coders = NULL, coder_
     # save ID - CELEX - procedure_id table
     id_table <- dplyr::bind_rows(df_samples, df_samples_overlap)
     id_table[is.na(id_table$coder),]$coder <- "overlap"
-    id_table <- data.frame(id_table[ , ! colnames(id_table) %in% id_table$coder], model.matrix( ~ coder - 1, id_table))
+    id_table <- data.frame(id_table[ , ! colnames(id_table) %in% id_table$coder], stats::model.matrix( ~ coder - 1, id_table))
 
     coding_samples[['id_table']] <- id_table
 

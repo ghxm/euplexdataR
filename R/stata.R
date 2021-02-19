@@ -13,7 +13,7 @@ stata <- function(df, out="", version = 15){
 
 
     if(nchar(out) > 0){
-        haven::write_dta(df, out, version = version, label = attr(data, "euplexdb version 1.0"))
+        haven::write_dta(df, out, version = version, label = attr(utils::data, "euplexdb version 1.0"))
     }else {
         df
     }

@@ -67,7 +67,7 @@ long <- function(df, event_names = list(), doc_names = list()){
                                    values_drop_na = TRUE)
 
     # 5. reformat variables
-    df_long <- type.convert(df_long, as.is = TRUE)
+    df_long <- utils::type.convert(df_long, as.is = TRUE)
     df_long <- reformat_date_variables(df_long)
 
     df_long
