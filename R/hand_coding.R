@@ -23,6 +23,8 @@ generate_hand_coding_samples <- function(df, out = NULL, n_coders = NULL, coder_
 
     df_samples[, paste0("doc_", doc, "_", hand_coding_vars)] <- NA
 
+    df_samples$url <- paste0("https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=celex:" , df_samples$doc_proposal_uri_celex, "&from=EN")
+
     samples_per_coder <- as.integer(sample_size/n_coders)
 
     # select overlap samples
@@ -38,18 +40,16 @@ generate_hand_coding_samples <- function(df, out = NULL, n_coders = NULL, coder_
         warning("Some CELEX IDs are NA. This function currently only works with CELEX IDs. Please check your input data!")
     }
 
-    df_samples$url <- paste0("https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=" , df_samples$doc_proposal_uri_celex, "&from=EN")
-
-
     # order variables, remove unnecessary
     df_samples_sparse <- df_samples[, c("ID", "url", unlist(sapply(hand_coding_vars, function(x) grep(x, names(df_samples), value = TRUE))))]
+    df_samples_overlap_sparse <- df_samples_overlap[, c("ID", "url", unlist(sapply(hand_coding_vars, function(x) grep(x, names(df_samples_overlap), value = TRUE))))]
 
     coding_samples <- split(df_samples_sparse, f=df_samples$coder)
 
 
     # add overlap samples
 
-    coding_samples <- lapply(coding_samples, function(x) dplyr::bind_rows(x[,!names(x) %in% c("coder")], df_samples_overlap))
+    coding_samples <- lapply(coding_samples, function(x) dplyr::bind_rows(x[,!names(x) %in% c("coder")], df_samples_overlap_sparse))
 
 
     # save ID - CELEX - procedure_id table
