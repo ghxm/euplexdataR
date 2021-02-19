@@ -1,4 +1,6 @@
 #' @export
+#' @import stataXml
+#' @import haven
 stata <- function(df, out="", version = 15){
 
     df <- df %>%

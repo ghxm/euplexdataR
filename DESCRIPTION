@@ -11,8 +11,13 @@ LazyData: true
 Remotes:
     jrnold/stataXml
 Imports:
-    lubridate,
     gtools,
     dplyr,
-    magrittr
+    magrittr,
+    stataXml,
+    stargazer,
+    haven,
+    tidyr,
+    tidyselect,
+    lubridate
 RoxygenNote: 7.1.1

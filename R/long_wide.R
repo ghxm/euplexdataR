@@ -8,6 +8,8 @@ is_long <- function(df){
 }
 
 #' @export
+#' @import tidyr
+#' @import tidyselect
 long <- function(df, event_names = list(), doc_names = list()){
 
     # @TODO: event name should be named list of "wide-eventvarname": long name
