@@ -15,7 +15,7 @@ df_complexity_varnames <- function(df, complexity_vars = "all"){
         complexity_varnames <- grep(complexity_vars, complexity_varnames, value = TRUE)
     }
 
-    unique(unlist(sapply(complexity_varnames, function(x) grep(paste0(doc, ".*", x), names(df), value=TRUE))))
+    unique(unlist(sapply(complexity_varnames, function(x) grep(paste0("doc_", ".*", x), names(df), value=TRUE))))
 }
 
 df_doc_types <- function(df, add_underscore_to_raw = FALSE, underscore = "_"){
