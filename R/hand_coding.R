@@ -1,3 +1,4 @@
+#' @export
 generate_hand_coding_samples <- function(df, out = NULL, n_coders = NULL, coder_names = c(), sample_size = 100, overlap = 3, doc = c("proposal"), hand_coding_vars = c("citations", "recitals", "articles", "ref_int_enacting", "ref_ext_enacting", '_bad_formatting', "comments")){
 
     if(is_long(df)){
