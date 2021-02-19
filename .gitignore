@@ -5,3 +5,7 @@
 renv
 R/hello.R
 *_local*
+*gist*
+proc_doc*
+*.zip
+*.dta
