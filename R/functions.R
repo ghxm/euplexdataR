@@ -143,7 +143,7 @@ remove_na_variables <- function(df){
 
 #' @export
 remove_raw_variables <- function(df){
-    df[,!grepl("^doc__|e__", names(df))]
+    df[,!grepl("^doc__|^e__)", names(df))]
 }
 
 #' @export
