@@ -12,6 +12,7 @@ Remotes:
     jrnold/stataXml
 Imports:
     gtools,
+    stringr,
     dplyr,
     magrittr,
     stataXml,

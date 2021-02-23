@@ -1,5 +1,5 @@
 #' @export
-stata <- function(df, out="", version = 15){
+stata <- function(df, out="", version = 14){
 
     df <- df %>%
         stata_convert_dates() %>%
