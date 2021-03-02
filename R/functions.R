@@ -259,7 +259,7 @@ create_complete_cases_variable <- function(df, vars = "complexity_core", doc = "
 
         }else{
             vars_check_list <- df_complexity_varnames(df, complexity_vars = "core", doc = doc)
-            df[,paste0("doc_", doc, "_complete_complexity")] <- complete.cases(df[, vars_check_list])
+            df[,paste0("doc_", doc, "_complete_complexity")] <- stats::complete.cases(df[, vars_check_list])
         }
 
 
