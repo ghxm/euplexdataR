@@ -22,11 +22,12 @@ euplexdata <- function (df, remove_extra_vars=TRUE, rename_vars = TRUE, request_
 
 
 #' @export
-public_dataset <- function(df, events = c("proposal", "final"), docs =  c("proposal")){
+public_dataset <- function(df, events = c("proposal", "final"), docs =  c("proposal"), proposal_dates = NULL){
 
     df <- df %>%
         set_bad_formatting_observations_na() %>%
         set_recast_observations_na() %>%
+        {if(!is.null(proposal_dates)) subset_by_date(., proposal_dates = proposal_dates) else .} %>%
         keep_only(keep_events = events, keep_docs = docs) %>%
         create_complete_cases_variable(vars="all") %>%
         create_complete_cases_variable(vars="complexity_core", doc = "proposal") %>%

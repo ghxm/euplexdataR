@@ -323,3 +323,51 @@ shorten_varnames <- function(df){
 
     df
 }
+
+#' @export
+subset_by_date <- function(df, proposal_dates, orders= c("ymd", "dmy")){
+    proposal_min_date <- NA
+    proposal_max_date <- NA
+
+    if(is_long(df)){
+        stop("Subsetting currently only works for wide-format data!")
+    }
+
+    if(!missing(proposal_dates)){
+        if(is.vector(proposal_dates)){
+            if(NROW(proposal_dates)==1){
+                proposal_min_date <- lubridate::parse_date_time(proposal_dates[1], orders=orders)
+            }else{
+                proposal_date <- sapply(proposal_dates, function(x) ifelse((nchar(x)<2|is.na(x)),lubridate::today(),lubridate::parse_date_time(x, orders=orders)))
+                proposal_min_date <- lubridate::parse_date_time(proposal_dates[1], orders=orders)
+                proposal_max_date <- lubridate::parse_date_time(proposal_dates[2], orders=orders)
+            }
+        }else{
+            proposal_min_date = lubridate::parse_date_time(proposal_dates, orders=orders)
+        }
+
+        if(is.na(proposal_max_date)){
+            proposal_max_date <- lubridate::today()
+        }
+
+        # get varname of proposal legal date var
+        proposal_date_varnames <- grep("^e(?:(_proposal_)|(__ADP_byCOM__)|(_))legal_date$", names(df), value=TRUE)
+
+        # if multiple select the one with "proposal" in it
+        if (NROW(proposal_date_varnames)>1){
+            for(i in 1:NROW(proposal_date_varnames)){
+                proposal_date_varname <- proposal_date_varnames[i]
+                if ("proposal" %in% proposal_date_varname){
+                    break
+                }
+            }
+        }
+
+        # subset by proposal date
+        df <- subset(df, df[,proposal_date_varname] >= proposal_min_date & df[,proposal_date_varname] <= proposal_max_date)
+    }
+
+    # @TODO: final dates
+
+    df
+}
