@@ -318,9 +318,6 @@ shorten_varnames <- function(df){
     names(df) <- gsub("institution", "inst", names(df))
     names(df) <- gsub("corporate", "corp", names(df))
 
-
-
-
     df
 }
 
@@ -347,7 +344,7 @@ subset_by_date <- function(df, proposal_dates, orders= c("ymd", "dmy")){
         }
 
         if(is.na(proposal_max_date)){
-            proposal_max_date <- lubridate::today()
+            proposal_max_date <- lubridate::today(tzone = "UTC")
         }
 
         # get varname of proposal legal date var
