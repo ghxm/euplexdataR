@@ -6,7 +6,7 @@ complexity_varnames_core <- sort(c("lix", "ref_", "structural_size", "word_entro
 
 complexity_varnames <- sort(unique(c(complexity_varnames_noncore, complexity_varnames_core)))
 
-df_complexity_varnames <- function(df, complexity_vars = "all"){
+df_complexity_varnames <- function(df, complexity_vars = "all", doc = "all"){
     if(complexity_vars == "all"){
         complexity_varnames <- complexity_varnames
     } else if (complexity_vars == "core"){
@@ -15,7 +15,13 @@ df_complexity_varnames <- function(df, complexity_vars = "all"){
         complexity_varnames <- grep(complexity_vars, complexity_varnames, value = TRUE)
     }
 
-    unique(unlist(sapply(complexity_varnames, function(x) grep(paste0("doc_", ".*", x), names(df), value=TRUE))))
+    complexity_varnames_df <- unique(unlist(sapply(complexity_varnames, function(x) grep(paste0("doc_", ".*", x), names(df), value=TRUE))))
+
+    if (doc == "all"){
+        return(complexity_varnames_df)
+    }else{
+        return(grep(paste0("^doc_[_]*", doc), complexity_varnames_df, value=TRUE))
+    }
 }
 
 df_doc_types <- function(df, add_underscore_to_raw = FALSE, underscore = "_"){
@@ -248,11 +254,11 @@ create_complete_cases_variable <- function(df, vars = "complexity_core", doc = "
 
     if(vars=="complexity_core"){
         if(doc=="all"){
-        vars_check_list <- df_complexity_varnames(df, complexity_vars = "all")
-        df$complete_complexity <- stats::complete.cases(df[, vars_check_list])
+            vars_check_list <- df_complexity_varnames(df, complexity_vars = "core", doc = doc)
+            df$complete_complexity <- stats::complete.cases(df[, vars_check_list])
 
         }else{
-            vars_check_list <- df_complexity_varnames(df, complexity_vars = "core")
+            vars_check_list <- df_complexity_varnames(df, complexity_vars = "core", doc = doc)
             df[,paste0("doc_", doc, "_complete_complexity")] <- complete.cases(df[, vars_check_list])
         }
 
