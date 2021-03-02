@@ -1,7 +1,7 @@
 # Main euplexdata function
 
 #' @export
-euplexdata <- function (df, remove_extra_vars=TRUE, rename_vars = TRUE){
+euplexdata <- function (df, remove_extra_vars=TRUE, rename_vars = TRUE, request_eurovoc = FALSE){
 
     df <- df %>%
         reformat_missing_data() %>%
@@ -12,7 +12,8 @@ euplexdata <- function (df, remove_extra_vars=TRUE, rename_vars = TRUE){
         apply_correction_data() %>%
         {if(remove_extra_vars) remove_extra_variables(.) else .} %>%
         {if(rename_vars) rename_variables(.) else .} %>%
-        create_complexity_variables()
+        create_complexity_variables() %>%
+        create_eurovoc_domain_dummy_variables(request = request_eurovoc)
 
     df$X <- NULL
 
@@ -31,6 +32,8 @@ public_dataset <- function(df, events = c("proposal", "final"), docs =  c("propo
         create_complete_cases_variable(vars="complexity_core", doc = "proposal") %>%
         remove_extra_variables %>%
         order_variables()
+
+        # @ TODO create eurovoc indicator if not already in dataset
 
     df
 

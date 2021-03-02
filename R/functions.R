@@ -176,7 +176,6 @@ apply_correction_data <- function(df){
 
     df
 
-
 }
 
 #' @export
