@@ -9,7 +9,7 @@ License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 Remotes:
-    jrnold/stataXml
+    jrnold/stataXml,
     ghxm/SPARQL
 Imports:
     gtools,
