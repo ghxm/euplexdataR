@@ -58,8 +58,7 @@ get_eurovoc_data <- function(request = FALSE){
         eurovoc_sparql_df <- clean_eurovoc_sparql_df(eurovoc_sparql_df)
         return(eurovoc_sparql_df)
     }else{
-        # get from /data
-        data("eurovoc_sparql")
+        # get from stored ata
         return(eurovoc_sparql)
     }
 
