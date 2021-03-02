@@ -311,7 +311,14 @@ shorten_varnames <- function(df){
     # proposal to prop
     names(df) <- gsub("legislative_instrument", "leg_instr", names(df))
 
+    # remove kincaid form flesch_kincaid
     names(df) <- gsub("kincaid_", "", names(df))
+
+    names(df) <- gsub("responsible", "resp", names(df))
+    names(df) <- gsub("institution", "inst", names(df))
+    names(df) <- gsub("corporate", "corp", names(df))
+
+
 
 
     df
