@@ -236,10 +236,25 @@ remove_raw_variables <- function(df) {
 }
 
 #' @export
-remove_extra_variables <- function(df) {
+remove_variables <- function(df, varnames_regex = NA){
+    # varnames to be removed
+    varnames_rm <- c(grep(varnames_regex, names(df), value=TRUE))
+    df <- df[, !(names(df) %in% varnames_rm)]
+
+    df
+
+}
+
+#' @export
+remove_extra_variables <- function(df, varnames_regex = "legal_basis") {
+
+
     df <- df %>%
         remove_na_variables() %>%
-        remove_raw_variables()
+        remove_raw_variables() %>%
+        remove_variables(varnames_regex = varnames_regex)
+
+
 
     df
 }
