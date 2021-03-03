@@ -65,7 +65,7 @@ get_eurovoc_data <- function(request = FALSE){
 }
 
 #' @export
-create_eurovoc_domain_dummy_variables <- function(df, request = FALSE){
+create_eurovoc_domain_dummy_variables <- function(df, request = FALSE, rm_raw = FALSE){
     eurovoc_sparql <- get_eurovoc_data(request=request)
     eurovoc_raw_varnames <- names(df)[grep("eurovoc_[0-9]$", names(df))]
 

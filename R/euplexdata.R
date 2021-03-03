@@ -1,7 +1,7 @@
 # Main euplexdata function
 
 #' @export
-euplexdata <- function (df, remove_extra_vars=TRUE, rename_vars = TRUE, request_eurovoc = FALSE){
+euplexdata <- function (df, remove_extra_vars=TRUE, rename_vars = TRUE, request_eurovoc = FALSE, rm_raw = TRUE){
 
     df <- df %>%
         reformat_missing_data() %>%
@@ -13,7 +13,7 @@ euplexdata <- function (df, remove_extra_vars=TRUE, rename_vars = TRUE, request_
         {if(remove_extra_vars) remove_extra_variables(.) else .} %>%
         {if(rename_vars) rename_variables(.) else .} %>%
         create_complexity_variables() %>%
-        create_eurovoc_domain_dummy_variables(request = request_eurovoc)
+        create_eurovoc_domain_dummy_variables(request = request_eurovoc, rm_raw = rm_raw)
 
     df$X <- NULL
 
@@ -22,7 +22,7 @@ euplexdata <- function (df, remove_extra_vars=TRUE, rename_vars = TRUE, request_
 
 
 #' @export
-public_dataset <- function(df, events = c("proposal", "final"), docs =  c("proposal"), proposal_dates = NULL){
+public_dataset <- function(df, events = c("proposal", "final"), docs =  c("proposal"), proposal_dates = NULL, rm_raw = TRUE){
 
     df <- df %>%
         set_bad_formatting_observations_na() %>%
@@ -31,7 +31,7 @@ public_dataset <- function(df, events = c("proposal", "final"), docs =  c("propo
         keep_only(keep_events = events, keep_docs = docs) %>%
         create_complete_cases_variable(vars="all") %>%
         create_complete_cases_variable(vars="complexity_core", doc = "proposal") %>%
-        create_unified_title_variable(lang="en", guess_title_lang = FALSE, guess_title_lang_conflict = TRUE, rm_raw = TRUE) %>%
+        create_unified_title_variable(lang="en", guess_title_lang = FALSE, guess_title_lang_conflict = TRUE, rm_raw = rm_raw) %>%
         remove_extra_variables %>%
         order_variables()
 
