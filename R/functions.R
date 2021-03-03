@@ -484,10 +484,10 @@ create_unified_title_variable <-
 
                     # if title is en, choose title
                     if (!is.na(title_lang_guess) &
-                        title_lang_guess == "en") {
+                        title_lang_guess[1] == "en") {
                         return(x['title'])
                     } else if (!is.na(dossier_title_lang_guess) &
-                               dossier_title_lang_guess == "en") {
+                               dossier_title_lang_guess[1] == "en") {
                         return(x['dossier_title'])
                     } else {
                         # if not en, choose title

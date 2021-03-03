@@ -95,6 +95,10 @@ create_eurovoc_domain_dummy_variables <- function(df, request = FALSE, rm_raw = 
 
     names(eurovoc_w) <- sapply(names(eurovoc_w), function(x){if(grepl("^eurovoc", x)) paste0(gsub("(?<=[a-z])_[_a-z]+", "", tolower(x), perl=TRUE)) else x}) # shorten names
 
+    if(rm_raw){
+        df <- df[, !(names(df)%in% eurovoc_raw_varnames)]
+    }
+
     # Merge Eurovoc to df and return
     merge(df, eurovoc_w, by ="procedure_id", all.x=TRUE)
 
