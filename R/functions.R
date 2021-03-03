@@ -131,7 +131,7 @@ reformat_missing_data <- function(df) {
 #' @export
 reformat_date_variables <- function(df) {
     df[, grep("_date$", names(df))] <-
-        lapply(df[, grep("_date$", names(df))], function(x)
+        sapply(df[, grep("_date$", names(df))], function(x)
             lubridate::as_date(x))
 
     df
