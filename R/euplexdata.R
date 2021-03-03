@@ -31,6 +31,7 @@ public_dataset <- function(df, events = c("proposal", "final"), docs =  c("propo
         keep_only(keep_events = events, keep_docs = docs) %>%
         create_complete_cases_variable(vars="all") %>%
         create_complete_cases_variable(vars="complexity_core", doc = "proposal") %>%
+        create_unified_title_variable(lang="en", guess_title_lang = FALSE, guess_title_lang_conflict = TRUE, rm_raw = TRUE) %>%
         remove_extra_variables %>%
         order_variables()
 
