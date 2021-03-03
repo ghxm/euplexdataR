@@ -130,9 +130,13 @@ reformat_missing_data <- function(df) {
 
 #' @export
 reformat_date_variables <- function(df) {
-    df[, grep("_date$", names(df))] <-
-        sapply(df[, grep("_date$", names(df))], function(x)
-            lubridate::as_date(x))
+
+    if (NROW(grep("_date$", names(df)))==1){
+        df[, grep("_date$", names(df))] <- lubridate::as_date(df[, grep("_date$", names(df))])
+    }
+    else {
+        df[, grep("_date$", names(df))] <- lapply(as.list(df[, grep("_date$", names(df))]), function(x) lubridate::as_date(x))
+    }
 
     df
 }
