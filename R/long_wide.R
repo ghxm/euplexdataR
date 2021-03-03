@@ -28,7 +28,7 @@ long <- function(df, event_names = list(), doc_names = list()){
     df_docs_long <- tidyr::pivot_longer(df_docs,
         cols = tidyselect::starts_with("doc"),
         names_to = c("doc", ".value"),
-        names_pattern = paste0("doc_[_]*((?:[a-zA-Z_0-9]*?)(?=__)|(?:[a-z]*?)(?=_))_(?:_(?!bad_formatting)){0,1}(.*)"), # old: doc_[_]*((?:[a-zA-Z_0-9]*)(?=__)|(?:[a-z]*)(?=_))_[_]{0,1}(.*)
+        names_pattern = paste0("doc_[_]*((?:[a-zA-Z_0-9]+?[A-Z]+?[a-zA-Z_0-9]+?)(?=__)|(?:[a-z]*?)(?=_))_(?:_(?!bad_formatting)){0,1}(.*)"), # old: doc_[_]*((?:[a-zA-Z_0-9]*)(?=__)|(?:[a-z]*)(?=_))_[_]{0,1}(.*)
         values_drop_na = TRUE)
 
     ## set prefix for correct variable names
@@ -40,7 +40,7 @@ long <- function(df, event_names = list(), doc_names = list()){
     df_events_long <- tidyr::pivot_longer(df_events,
                                         cols = tidyselect::starts_with("e_"),
                                         names_to = c("event", ".value"),
-                                        names_pattern = paste0("e_[_]*((?:[a-zA-Z_0-9]*?)(?=__)|(?:[a-z]*)(?=_))_[_]{0,1}(.*)"), #old: e_[_]*((?:[a-zA-Z_0-9]*)(?=__)|(?:[a-z]*)(?=_))_[_]{0,1}(.*)
+                                        names_pattern = paste0("e_[_]*((?:[a-zA-Z_0-9]+?[A-Z]+?[a-zA-Z_0-9]+?)(?=__)|(?:[a-z]*)(?=_))_[_]{0,1}(.*)"), #old: e_[_]*((?:[a-zA-Z_0-9]*)(?=__)|(?:[a-z]*)(?=_))_[_]{0,1}(.*)
                                         values_drop_na = TRUE)
 
     ## rename, set prefix
@@ -59,12 +59,17 @@ long <- function(df, event_names = list(), doc_names = list()){
 
     rm(df_procs, df_eventsdocs_long)
 
+    if (any(grep("_[0-9]+$", names(df_proceventsdocs_long)))){
+
     # 4. proceventdoc proc-level to long
     df_long <- tidyr::pivot_longer(df_proceventsdocs_long,
                                    cols = tidyselect::matches("_[0-9]+$"),
                                    names_to = c(".value"),
                                    names_pattern = "(.*)_[0-9]+$",
                                    values_drop_na = TRUE)
+    } else {
+        df_long <- df_proceventsdocs_long
+    }
 
     # 5. reformat variables
     df_long <- utils::type.convert(df_long, as.is = TRUE)

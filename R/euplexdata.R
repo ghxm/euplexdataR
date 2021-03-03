@@ -22,7 +22,7 @@ euplexdata <- function (df, remove_extra_vars=TRUE, rename_vars = TRUE, request_
 
 
 #' @export
-public_dataset <- function(df, events = c("proposal", "final"), docs =  c("proposal"), proposal_dates = NULL, rm_raw = TRUE, var_rm_regex = "legal_basis"){
+public_dataset <- function(df, events = c("proposal"), docs =  c("proposal"), proposal_dates = NULL, rm_raw = TRUE, var_rm_regex = "legal_basis"){
 
     df <- df %>%
         set_bad_formatting_observations_na() %>%
