@@ -246,8 +246,7 @@ remove_variables <- function(df, varnames_regex = NA){
 }
 
 #' @export
-remove_extra_variables <- function(df, varnames_regex = "legal_basis") {
-
+remove_extra_variables <- function(df, varnames_regex = NA) {
 
     df <- df %>%
         remove_na_variables() %>%
