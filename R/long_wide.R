@@ -46,30 +46,31 @@ long <- function(df, event_names = list(), doc_names = list()){
     ## rename, set prefix
     names(df_events_long)[-c(1,2)] <- sapply(names(df_events_long)[-c(1,2)], function(x) paste0("e_", x))
 
-    rm(df_docs, df_events)
+    if (any(grep("_[0-9]+$", names(df_proc)))){
+
+        # proc to long
+        df_procs_long <- tidyr::pivot_longer(df_procs,
+                                            cols = tidyselect::matches("_[0-9]+$"),
+                                            names_to = c(".value"),
+                                            names_pattern = "(.*)_[0-9]+$",
+                                            values_drop_na = TRUE,
+                                            names_repair="unique")
+    }else {
+        df_procs_long <- df_procs
+    }
+
+    rm(df_docs, df_events, df_procs)
 
     # 2. merge doc to event
     df_eventsdocs_long <- merge(df_events_long, df_docs_long, all = TRUE)
 
-    rm(df_events_long, df_docs_long)
+    # 3. merge docsevents to proc_long
+    df_procseventsdocs_long <- merge(df_procs_long, df_eventsdocs_long, all.x=TRUE)
 
-    # 3. merge docsevents to proc
-    ## merge
-    df_proceventsdocs_long <- merge(df_procs, df_eventsdocs_long, all.x=TRUE)
+    df_long <- df_procseventsdocs_long
 
-    rm(df_procs, df_eventsdocs_long)
+    rm(df_procs_long, df_eventsdocs_long, df_proceventsdocs_long)
 
-    if (any(grep("_[0-9]+$", names(df_proceventsdocs_long)))){
-
-    # 4. proceventdoc proc-level to long
-    df_long <- tidyr::pivot_longer(df_proceventsdocs_long,
-                                   cols = tidyselect::matches("_[0-9]+$"),
-                                   names_to = c(".value"),
-                                   names_pattern = "(.*)_[0-9]+$",
-                                   values_drop_na = TRUE)
-    } else {
-        df_long <- df_proceventsdocs_long
-    }
 
     # 5. reformat variables
     df_long <- utils::type.convert(df_long, as.is = TRUE)
@@ -78,3 +79,9 @@ long <- function(df, event_names = list(), doc_names = list()){
     df_long
 }
 
+
+wide <- function(df_long){
+
+    df_wide <- tidyr::pivot_wider(df_long, tidyr::matches(""))
+
+}

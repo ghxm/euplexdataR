@@ -22,7 +22,7 @@ euplexdata <- function (df, remove_extra_vars=TRUE, rename_vars = TRUE, request_
 
 
 #' @export
-public_dataset <- function(df, events = c("proposal"), docs =  c("proposal"), proposal_dates = NULL, rm_raw = TRUE, var_rm_regex = "legal_basis"){
+public_dataset <- function(df, events = c("proposal"), docs =  c("proposal"), wide = FALSE, proposal_dates = NULL, rm_raw = TRUE, var_rm_regex = "legal_basis|decision_mode__fd"){
 
     df <- df %>%
         set_bad_formatting_observations_na() %>%
@@ -33,6 +33,7 @@ public_dataset <- function(df, events = c("proposal"), docs =  c("proposal"), pr
         create_complete_cases_variable(vars="complexity_core", doc = "proposal") %>%
         create_unified_title_variable(lang="en", guess_title_lang = FALSE, guess_title_lang_conflict = TRUE, rm_raw = rm_raw) %>%
         remove_extra_variables(varnames_regex = var_rm_regex) %>%
+        {if(wide) . else long(.)} %>%
         order_variables()
 
         # @ TODO create eurovoc indicator if not already in dataset
