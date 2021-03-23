@@ -124,7 +124,7 @@ data_summary_report <- function(df){
         cat("\n")
         cat("---")
         cat("\n")
-        cat(paste("in data:", NROW(df[which(!is.na(df[,paste0("doc_",doc,"_words")])),])))
+        cat(paste("in data:", NROW(df[which(!is.na(df[,paste0("doc_",doc,"_words_noannex")])),])))
         cat("\n")
         data_doc_coverage_report(df, doc = doc)
         cat("\n")

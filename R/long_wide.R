@@ -46,7 +46,7 @@ long <- function(df, event_names = list(), doc_names = list()){
     ## rename, set prefix
     names(df_events_long)[-c(1,2)] <- sapply(names(df_events_long)[-c(1,2)], function(x) paste0("e_", x))
 
-    if (any(grep("_[0-9]+$", names(df_proc)))){
+    if (any(grep("_[0-9]+$", names(df_procs)))){
 
         # proc to long
         df_procs_long <- tidyr::pivot_longer(df_procs,
