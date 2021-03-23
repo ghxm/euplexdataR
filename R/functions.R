@@ -656,9 +656,7 @@ subset_by_date <-
             }
 
             # subset by proposal date
-            df <-
-                subset(df, df[, proposal_date_varname] >= proposal_min_date &
-                           df[, proposal_date_varname] <= proposal_max_date)
+            df <- subset(df, df[, proposal_date_varname] >= proposal_min_date & df[, proposal_date_varname] <= proposal_max_date)
         }
 
         # @TODO: final dates
