@@ -131,11 +131,18 @@ reformat_missing_data <- function(df) {
 #' @export
 reformat_date_variables <- function(df) {
 
-    if (NROW(grep("_date$", names(df)))==1){
-        df[, grep("_date$", names(df))] <- lubridate::as_date(df[, grep("_date$", names(df))])
+    date_vars <- grep("_date$", names(df), value=TRUE)
+
+    if (NROW(date_vars)==1){
+        df[, date_vars] <- lubridate::as_date(df[, date_vars])
     }
     else {
-        df[, grep("_date$", names(df))] <- lapply(as.list(df[, grep("_date$", names(df))]), function(x) lubridate::as_date(x))
+        for (i in 1:NROW(date_vars)){
+            var <- date_vars[i]
+
+            df[, var] <-  lubridate::as_date(df[, var])
+
+        }
     }
 
     df
@@ -286,15 +293,39 @@ apply_correction_data <- function(df) {
 }
 
 #' @export
-set_bad_formatting_observations_na <- function(df) {
+set_bad_formatting_observations_na <- function(df, newline=FALSE, newline_ratio_cutoff=0.003) {
+
+    doc_complexity_vars <- df_complexity_varnames(df, complexity_vars = "all")
+
     bad_formatting_varnames <-
         grep("bad_formatting$", names(df), value = TRUE)
 
-    for (i in 1:NROW(bad_formatting_varnames)) {
-        doc_complexity_vars <-
-            df_complexity_varnames(df, complexity_vars = "all")
-        df[which(df[, bad_formatting_varnames[i]]), doc_complexity_vars] <-
-            NA
+        for (i in 1:NROW(bad_formatting_varnames)) {
+
+            bad_formatting_var <- bad_formatting_varnames[i]
+            bad_formatting_reason_var <- paste0(bad_formatting_varnames[i], '_reason')
+
+            if (newline){
+
+                df[which(df[, bad_formatting_var]), doc_complexity_vars] <-
+                    NA
+            } else {
+
+                df[which(df[, bad_formatting_var] & df[, bad_formatting_reason_var]!='newline;'), doc_complexity_vars] <-
+                    NA
+            }
+        }
+
+
+    # Newline cutoff
+
+    newline_ratio_varnames <- grep("newline_ratio$", names(df), value = TRUE)
+
+    for (k in 1:NROW(newline_ratio_varnames)){
+
+        df[which(df[, newline_ratio_varnames[k]]<newline_ratio_cutoff), doc_complexity_vars] <-
+        NA
+
     }
 
     df
@@ -656,7 +687,7 @@ subset_by_date <-
             }
 
             # subset by proposal date
-            df <- subset(df, df[, proposal_date_varname] >= proposal_min_date & df[, proposal_date_varname] <= proposal_max_date)
+            df <- subset(df, (df[, proposal_date_varname] >= proposal_min_date & df[, proposal_date_varname] <= proposal_max_date))
         }
 
         # @TODO: final dates

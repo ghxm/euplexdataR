@@ -25,7 +25,7 @@ euplexdata <- function (df, remove_extra_vars=TRUE, rename_vars = TRUE, request_
 public_dataset <- function(df, events = c("proposal"), docs =  c("proposal"), wide = FALSE, proposal_dates = NULL, rm_raw = TRUE, var_rm_regex = "legal_basis|decision_mode__fd"){
 
     df <- df %>%
-        set_bad_formatting_observations_na() %>%
+        set_bad_formatting_observations_na(newline = FALSE, newline_ratio_cutoff = 0.003) %>%
         set_recast_observations_na() %>%
         {if(!is.null(proposal_dates)) subset_by_date(., proposal_dates = proposal_dates) else .} %>%
         keep_only(keep_events = events, keep_docs = docs) %>%
