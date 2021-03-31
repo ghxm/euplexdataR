@@ -69,7 +69,7 @@ long <- function(df, event_names = list(), doc_names = list()){
 
     df_long <- df_procseventsdocs_long
 
-    rm(df_procs_long, df_eventsdocs_long, df_proceventsdocs_long)
+    rm(df_procs_long, df_eventsdocs_long, df_procseventsdocs_long)
 
 
     # 5. reformat variables
