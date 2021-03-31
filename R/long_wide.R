@@ -28,7 +28,7 @@ long <- function(df, event_names = list(), doc_names = list()){
     df_docs_long <- tidyr::pivot_longer(df_docs,
         cols = tidyselect::starts_with("doc"),
         names_to = c("doc", ".value"),
-        names_pattern = paste0("doc_[_]*((?:[a-zA-Z_0-9]+?[A-Z]+?[a-zA-Z_0-9]+?)(?=__)|(?:[a-z]*?)(?=_))_(?:_(?!bad_formatting)){0,1}(.*)"), # old: doc_[_]*((?:[a-zA-Z_0-9]*)(?=__)|(?:[a-z]*)(?=_))_[_]{0,1}(.*)
+        names_pattern = paste0("doc_[_]*((?:[a-zA-Z_0-9]+?[A-Z]+?[a-zA-Z_0-9]+?)(?=__)|(?:[a-z]*?)(?=_))_(?:_(?!bad_formatting|euplexcy)){0,1}(.*)"), # old: doc_[_]*((?:[a-zA-Z_0-9]*)(?=__)|(?:[a-z]*)(?=_))_[_]{0,1}(.*)
         values_drop_na = TRUE)
 
     ## set prefix for correct variable names
