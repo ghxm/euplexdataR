@@ -169,12 +169,9 @@ reformat_logical_variables <- function(df) {
 
 
 #' @export
-create_named_procedure_event_variables <-
-    function(df,
-             event_codes = c(),
-             event_name  = c()) {
+create_named_procedure_event_variables <- function(df, event_codes = c(), event_name  = c()) {
         # @TODO
-        # merge variables other dan legal_date for multi-event-code events (e.g. final)
+        # merge variables other than legal_date for multi-event-code events (e.g. final)
 
         # Codes must be supplied in the reverse order they appear in the legislative process (last possible first)!
 
@@ -197,14 +194,13 @@ create_named_procedure_event_variables <-
         rows <- list()
         j <- 1
 
-
         # for every row
         for (i in 1:NROW(df_events)) {
             df_row <- df_events[i, ]
             for (code in event_codes) {
                 legal_date <- df_events[i, paste0("e_", code, "_legal_date")]
                 # check if date/document ref available
-                if (!gtools::invalid(legal_date)) {
+                if (!gtools::invalid(legal_date) & !is.na(legal_date)) {
                     # convert all vars with the resp. code for that row
                     names(df_row) <-
                         gsub(code, event_name, names(df_row))
@@ -234,7 +230,7 @@ create_named_procedure_event_variables <-
         }
 
         merge(df, df_rows, all.x = TRUE, by = merge_by)
-    }
+}
 
 #' @export
 remove_na_variables <- function(df) {
@@ -350,11 +346,7 @@ set_recast_observations_na <- function(df) {
 }
 
 #' @export
-keep_only <-
-    function(df,
-             keep_events = c("proposal", "final"),
-             keep_docs = c("proposal"),
-             long = FALSE) {
+keep_only <- function(df, keep_events = c("proposal", "final"), keep_docs = c("proposal"), long = FALSE) {
         if (!long) {
             event_varnames <- grep("^e_", names(df), value = TRUE)
             keep_event_varnames <- c()
