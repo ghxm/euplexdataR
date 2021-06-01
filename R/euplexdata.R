@@ -29,8 +29,8 @@ public_dataset <- function(df, events = c("proposal"), docs =  c("proposal"), wi
         set_recast_observations_na() %>%
         {if(!is.null(proposal_dates)) subset_by_date(., proposal_dates = proposal_dates) else .} %>%
         keep_only(keep_events = events, keep_docs = docs) %>%
-        create_complete_cases_variable(vars="all") %>%
-        create_complete_cases_variable(vars="complexity_core", doc = "proposal") %>%
+        create_complete_cases_variable(vars="complexity_core",doc="proposal") %>%
+        create_complete_cases_variable(vars="complexity_core",doc="final") %>%
         create_unified_title_variable(lang="en", guess_title_lang = FALSE, guess_title_lang_conflict = TRUE, rm_raw = rm_raw) %>%
         remove_extra_variables(varnames_regex = var_rm_regex) %>%
         {if(wide) . else long(.)} %>%
