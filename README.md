@@ -21,6 +21,8 @@ devtools::install_github("ghxm/euplexdataR")
 
 `````
 
+Under Mac and Linux, please additionally install `protobuf`
+
 ## Usage
 
 The package functions require a data frame object of the euplexdb dataset to be passed as the first argument. Example:
