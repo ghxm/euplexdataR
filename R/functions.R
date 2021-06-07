@@ -9,7 +9,9 @@ complexity_varnames_noncore <-
             "flesch_kincaid_reading_ease",
             "smog",
             "coleman_liau_index",
-            "forcast"
+            "forcast",
+            'avg_article_depth',
+            'flesch'
         )
     )
 
@@ -329,7 +331,8 @@ set_bad_formatting_observations_na <- function(df, newline=FALSE, newline_ratio_
 }
 
 #' @export
-set_recast_observations_na <- function(df) {
+set_recast_observations_na <- function(df, doc='proposal') {
+
     leg_proc_subtype_varnames <-
         grep("procedure_subtype$", names(df), value = TRUE)
 
@@ -337,6 +340,11 @@ set_recast_observations_na <- function(df) {
     for (i in 1:NROW(leg_proc_subtype_varnames)) {
         doc_complexity_vars <-
             df_complexity_varnames(df, complexity_vars = "all")
+
+        if(!doc=='all'){
+            doc_complexity_vars <- doc_complexity_vars[grepl(doc, doc_complexity_vars)]
+        }
+
         df[which(df[, leg_proc_subtype_varnames[i]] == "Recast"), doc_complexity_vars] <-
             NA
     }

@@ -80,8 +80,8 @@ long <- function(df, event_names = list(), doc_names = list()){
 }
 
 
-wide <- function(df_long){
-
-    df_wide <- tidyr::pivot_wider(df_long, tidyr::matches(""))
-
-}
+#wide <- function(df_long){
+#
+#    df_wide <- tidyr::pivot_wider(df_long, tidyr::matches(""))
+#
+#}

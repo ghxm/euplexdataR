@@ -26,7 +26,7 @@ public_dataset <- function(df, events = c("proposal"), docs =  c("proposal"), wi
 
     df <- df %>%
         set_bad_formatting_observations_na(newline = FALSE, newline_ratio_cutoff = 0.003) %>%
-        set_recast_observations_na() %>%
+        set_recast_observations_na(doc="proposal") %>%
         {
             if(!is.null(proposal_dates)){
                 subset_by_date(., proposal_dates = proposal_dates)}
@@ -34,11 +34,7 @@ public_dataset <- function(df, events = c("proposal"), docs =  c("proposal"), wi
         } %>%
         keep_only(keep_events = events, keep_docs = docs) %>%
         create_complete_cases_variable(vars="complexity_core",doc="proposal") %>%
-        {
-            if('final' %in% docs) {
-                return(create_complete_cases_variable(vars="complexity_core",doc="final"))
-            }else{return(.)}
-        }%>%
+        {if('final' %in% docs) create_complete_cases_variable(vars="complexity_core",doc="final") else .} %>%
         create_unified_title_variable(lang="en", guess_title_lang = FALSE, guess_title_lang_conflict = TRUE, rm_raw = rm_raw) %>%
         remove_extra_variables(varnames_regex = var_rm_regex) %>%
         {if(wide) . else long(.)} %>%
