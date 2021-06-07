@@ -30,10 +30,12 @@ stata_too_long_varnames <- function(df){
 }
 
 #' @export
-stata_shorten_varnames <- function(df){
+stata_shorten_varnames <- function(df, rename_doc=FALSE){
 
     # doc_ to d_
-    names(df) <- gsub("doc_", "d_", names(df))
+    if(rename_doc){
+        names(df) <- gsub("doc_", "d_", names(df))
+    }
 
     # proposal to prop
     names(df) <- gsub("proposal_", "prop_", names(df))
