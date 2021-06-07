@@ -192,3 +192,35 @@ data_complexity_variables_report <- function(df, doc = "proposal", vars = "core"
     stargazer::stargazer(df[,vars_check_list], type = "text", digits = 1)
 
 }
+
+
+
+#' Subset the data to missing observations
+#'
+#' @param df
+#' @param vars_display character vector of additional variable names to include in the dataset (not checked)
+#' @param vars_check character vector of variable names to check for NA
+#' @param all_na logical indicating whether all of vars_check need to be NA for an inclusion in the result
+#' @param include_procedure_url logical whether an EUR-Lex procedure url should be included in the result
+#' @return The input df subset to NA observations in the vars_check columns
+na_data <- function(df, vars_display = c('procedure_id'), vars_check, all_na=FALSE, include_procedure_url = TRUE){
+
+    # generate procedure url
+    if (include_procedure_url){
+        df$procedure_url <- paste0("https://eur-lex.europa.eu/procedure/EN/", df$procedure_id)
+        vars_display <- c(vars_display, 'procedure_url')
+    }
+
+    if (!all_na){
+        # include if any of vars check is NA
+        na_df <- df[!complete.cases(df[, vars_check]),]
+    } else {
+        # include if all of vars check are NA
+        na_df <- apply(df,1, function(x) all((is.na(x))))
+    }
+
+
+    # subset dataframe and return
+    na_df[,c(vars_display, vars_check)]
+
+}
