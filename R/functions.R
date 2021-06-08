@@ -291,40 +291,65 @@ apply_correction_data <- function(df) {
 }
 
 #' @export
-set_bad_formatting_observations_na <- function(df, newline=FALSE, newline_ratio_cutoff=0.003) {
+set_bad_formatting_observations_na <- function(df, newline=FALSE, newline_ratio_cutoff=0.003, doc='all') {
 
-    doc_complexity_vars <- df_complexity_varnames(df, complexity_vars = "all")
+        # long format handling (no doc in varname)
+        doc_complexity_vars_all <- df_complexity_varnames(df, complexity_vars = "all")
 
-    bad_formatting_varnames <-
-        grep("bad_formatting$", names(df), value = TRUE)
+        bad_formatting_varnames <-
+            grep("bad_formatting$", names(df), value = TRUE)
 
-        for (i in 1:NROW(bad_formatting_varnames)) {
-
-            bad_formatting_var <- bad_formatting_varnames[i]
-            bad_formatting_reason_var <- paste0(bad_formatting_varnames[i], '_reason')
-
-            if (newline){
-
-                df[which(df[, bad_formatting_var]), doc_complexity_vars] <-
-                    NA
-            } else {
-
-                df[which(df[, bad_formatting_var] & df[, bad_formatting_reason_var]!='newline;'), doc_complexity_vars] <-
-                    NA
-            }
+        if(!doc=="all" & !is_long(df)){
+            bad_formatting_varnames <- bad_formatting_varnames[grepl(doc, bad_formatting_varnames)]
         }
 
+            for (i in 1:NROW(bad_formatting_varnames)) {
 
-    # Newline cutoff
+                bad_formatting_var <- bad_formatting_varnames[i]
+                bad_formatting_reason_var <- paste0(bad_formatting_varnames[i], '_reason')
 
-    newline_ratio_varnames <- grep("newline_ratio$", names(df), value = TRUE)
+                if(!is_long(df)){
+                    var_doc <- gsub('(doc_)(.+?)(_.*)', '\\2', bad_formatting_var, perl=TRUE)
+                    doc_complexity_vars <- doc_complexity_vars_all[grepl(var_doc, doc_complexity_vars_all)]
+                } else{
+                    doc_complexity_vars <- doc_complexity_vars_all
+                }
 
-    for (k in 1:NROW(newline_ratio_varnames)){
 
-        df[which(df[, newline_ratio_varnames[k]]<newline_ratio_cutoff), doc_complexity_vars] <-
-        NA
+                if (newline){
 
-    }
+                    df[which(df[, bad_formatting_var]), doc_complexity_vars] <-
+                        NA
+                } else {
+
+                    df[which(df[, bad_formatting_var] & df[, bad_formatting_reason_var]!='newline;'), doc_complexity_vars] <-
+                        NA
+                }
+            }
+
+
+        # Newline cutoff
+
+        newline_ratio_varnames <- grep("newline_ratio$", names(df), value = TRUE)
+
+        if(!doc=="all" & !is_long(df)){
+            newline_ratio_varnames <- newline_ratio_varnames[grepl(doc, newline_ratio_varnames)]
+        }
+
+        for (k in 1:NROW(newline_ratio_varnames)){
+
+            if(!is_long(df)){
+                var_doc <- gsub('(doc_)(.+?)(_.*)', '\\2', newline_ratio_varnames[k], perl=TRUE)
+                doc_complexity_vars <- doc_complexity_vars_all[grepl(var_doc, doc_complexity_vars_all)]
+            } else{
+                doc_complexity_vars <- doc_complexity_vars_all
+            }
+
+            df[which(df[, newline_ratio_varnames[k]]<newline_ratio_cutoff), doc_complexity_vars] <-
+            NA
+
+        }
+
 
     df
 
