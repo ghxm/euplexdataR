@@ -1,7 +1,7 @@
 # Main euplexdata function
 
 #' @export
-euplexdata <- function (df, remove_extra_vars=TRUE, rename_vars = TRUE, request_eurovoc = FALSE, rm_raw = TRUE, docs_events=c('proposal', 'final')){
+euplexdata <- function (df, remove_extra_vars=TRUE, rename_vars = TRUE, request_eurovoc = FALSE, rm_raw = TRUE, events_docs=c('proposal', 'final')){
 
     df <- df %>%
         reformat_missing_data() %>%
