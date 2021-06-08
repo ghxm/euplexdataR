@@ -336,6 +336,10 @@ set_recast_observations_na <- function(df, doc='proposal') {
     leg_proc_subtype_varnames <-
         grep("procedure_subtype$", names(df), value = TRUE)
 
+    if(!doc=='all'){
+        leg_proc_subtype_varnames <- leg_proc_subtype_varnames[grepl(doc, leg_proc_subtype_varnames)]
+    }
+
 
     for (i in 1:NROW(leg_proc_subtype_varnames)) {
         doc_complexity_vars <-
