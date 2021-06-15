@@ -34,7 +34,7 @@ public_dataset <- function(df, events = c("proposal"), docs =  c("proposal"), wi
         } %>%
         keep_only(keep_events = events, keep_docs = docs) %>%
         create_complete_cases_variable(vars="complexity_core",doc="proposal") %>%
-        {if('final' %in% docs) create_complete_cases_variable(vars="complexity_core",doc="final") else .} %>%
+        {if('final' %in% docs) create_complete_cases_variable(., vars="complexity_core",doc="final") else .} %>%
         create_unified_title_variable(lang="en", guess_title_lang = FALSE, guess_title_lang_conflict = TRUE, rm_raw = rm_raw) %>%
         remove_extra_variables(varnames_regex = var_rm_regex) %>%
         {if(wide) . else long(.)} %>%
