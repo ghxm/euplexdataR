@@ -262,8 +262,6 @@ remove_extra_variables <- function(df, varnames_regex = NA) {
         remove_raw_variables() %>%
         remove_variables(varnames_regex = varnames_regex)
 
-
-
     df
 }
 
@@ -723,3 +721,24 @@ subset_by_date <-
 
         df
     }
+
+
+#' @export
+group_vars_to_list_var <-
+    function(df, varname_regex, new_varname, rm_old = TRUE){
+
+        varnames_old <- grep(varname_regex, names(df), value=TRUE, perl=TRUE)
+
+        df[, new_varname] <- apply(df, 1, function(x){
+            paste(x[varnames_old][nzchar(x[varnames_old]) & !is.na(x[varnames_old])], collapse = '###')
+        })
+
+        df[, new_varname][nchar(df[, new_varname])==0] <- NA
+
+        if(rm_old){
+            df <- remove_variables(df, varnames_regex = varname_regex)
+        }
+
+        df
+    }
+
