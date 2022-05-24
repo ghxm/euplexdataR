@@ -725,12 +725,12 @@ subset_by_date <-
 
 #' @export
 group_vars_to_list_var <-
-    function(df, varname_regex, new_varname, rm_old = TRUE){
+    function(df, varname_regex, new_varname, separator="###", rm_old = TRUE){
 
         varnames_old <- grep(varname_regex, names(df), value=TRUE, perl=TRUE)
 
         df[, new_varname] <- apply(df, 1, function(x){
-            paste(x[varnames_old][nzchar(x[varnames_old]) & !is.na(x[varnames_old])], collapse = '###')
+            paste(x[varnames_old][nzchar(x[varnames_old]) & !is.na(x[varnames_old])], collapse = separator)
         })
 
         df[, new_varname][nchar(df[, new_varname])==0] <- NA
