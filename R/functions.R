@@ -334,18 +334,20 @@ set_bad_formatting_observations_na <- function(df, newline=FALSE, newline_ratio_
             newline_ratio_varnames <- newline_ratio_varnames[grepl(doc, newline_ratio_varnames)]
         }
 
-        for (k in 1:NROW(newline_ratio_varnames)){
+        if (NROW(newline_ratio_varnames)>0){
+            for (k in 1:NROW(newline_ratio_varnames)){
 
-            if(!is_long(df)){
-                var_doc <- gsub('(doc_)(.+?)(_.*)', '\\2', newline_ratio_varnames[k], perl=TRUE)
-                doc_complexity_vars <- doc_complexity_vars_all[grepl(var_doc, doc_complexity_vars_all)]
-            } else{
-                doc_complexity_vars <- doc_complexity_vars_all
+                if(!is_long(df)){
+                    var_doc <- gsub('(doc_)(.+?)(_.*)', '\\2', newline_ratio_varnames[k], perl=TRUE)
+                    doc_complexity_vars <- doc_complexity_vars_all[grepl(var_doc, doc_complexity_vars_all)]
+                } else{
+                    doc_complexity_vars <- doc_complexity_vars_all
+                }
+
+                df[which(df[, newline_ratio_varnames[k]]<newline_ratio_cutoff), doc_complexity_vars] <-
+                NA
+
             }
-
-            df[which(df[, newline_ratio_varnames[k]]<newline_ratio_cutoff), doc_complexity_vars] <-
-            NA
-
         }
 
 
