@@ -744,3 +744,53 @@ group_vars_to_list_var <-
         df
     }
 
+
+
+#' @export
+create_eurlex_search_variable <-
+    function(df, api_base_url = "https://eurlexapi.mxhg.org/procedure/", max_retries = 3){
+
+        # call api and get cases that show up in eurlex search (wrap in try catch)
+        tryCatch({
+            eurlex_search <- get_eurlex_search_result_from_api(api_base_url, endpoint = "search", max_retries = max_retries)
+
+            eurlex_search_references <- data.frame(`procedure_id` = eurlex_search[, 'reference'])
+            eurlex_search_references$eurlex_search <- TRUE
+
+            df <- merge(df, eurlex_search_references, by.x = 'procedure_id', by.y = 'procedure_id', all.x=TRUE)
+
+            df$eurlex_search <- ifelse(is.na(df$eurlex_search), FALSE, TRUE)
+
+            return(df)
+
+        },
+            error = function(e){
+                warning('Could not create EURLEX search variable, proceeding without!')
+
+                return(df)
+            }
+        )
+
+
+    }
+
+
+get_eurlex_search_result_from_api <-
+    function(api_base_url = "https://eurlexapi.mxhg.org/procedure/", endpoint = "search", max_retries = 3){
+
+        # request API
+        res <- httr::RETRY(
+            "GET",
+            url = paste0(api_base_url, endpoint),
+            times = max_retries
+        )
+
+        # check the response status, throw error if failed
+        httr::stop_for_status(res)
+
+        # convert res to json
+        eurlex_search <- jsonlite::fromJSON(rawToChar(res$content))
+
+        eurlex_search
+
+    }

@@ -3,6 +3,7 @@
 export("%>%")
 export(apply_correction_data)
 export(create_complete_cases_variable)
+export(create_eurlex_search_variable)
 export(create_eurovoc_domain_dummy_variables)
 export(create_named_procedure_event_variables)
 export(create_title_variable)

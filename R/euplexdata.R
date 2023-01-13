@@ -13,7 +13,8 @@ euplexdata <- function (df, remove_extra_vars=TRUE, rename_vars = TRUE, request_
         {if(remove_extra_vars) remove_extra_variables(.) else .} %>%
         {if(rename_vars) rename_variables(.) else .} %>%
         create_complexity_variables() %>%
-        create_eurovoc_domain_dummy_variables(request = request_eurovoc, rm_raw = rm_raw)
+        create_eurovoc_domain_dummy_variables(request = request_eurovoc, rm_raw = rm_raw) %>%
+        create_eurlex_search_variable(max_retries = 3)
 
     df$X <- NULL
 
