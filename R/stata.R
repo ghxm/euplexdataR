@@ -13,7 +13,7 @@ stata <- function(df, out="", version = 14){
 
 
     if(nchar(out) > 0){
-        haven::write_dta(df, out, version = version, label = attr(utils::data, "euplexdb version 1.0"))
+        haven::write_dta(df, out, version = version, label = attr(utils::data, "euplex dataset"))
     }else {
         df
     }
@@ -48,8 +48,10 @@ stata_shorten_varnames <- function(df, rename_doc=FALSE){
 stata_shorten_strings <- function(df){
 
     # shortening strings to 128 characters for stata
-    df[, unlist(lapply(df, is.character))] <- apply(df[, which(sapply(df, is.character))], 2, function(y) sapply(y, function(x) ifelse((nchar(x, keepNA = FALSE)) > 128, strtrim(x, 128), x)))
-
+    df[, unlist(lapply(df, is.character))] <- apply(df[, which(sapply(df, is.character))], 2, function(y) {
+        y <- iconv(y)
+        sapply(y, function(x) ifelse((nchar(x, keepNA = FALSE)) > 128, strtrim(x, 128), x))
+    })
     df
 }
 
