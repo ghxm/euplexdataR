@@ -202,7 +202,7 @@ create_named_procedure_event_variables <- function(df, event_codes = c(), event_
             for (code in event_codes) {
                 legal_date <- df_events[i, paste0("e_", code, "_legal_date")]
                 # check if date/document ref available
-                if (!gtools::invalid(legal_date) & !is.na(legal_date)) {
+                if (NROW(legal_date) == 1 & !gtools::invalid(legal_date) & !is.na(legal_date)) {
                     # convert all vars with the resp. code for that row
                     names(df_row) <-
                         gsub(code, event_name, names(df_row))
