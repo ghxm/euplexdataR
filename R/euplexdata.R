@@ -39,7 +39,7 @@ public_dataset <- function(df, events = c("proposal"), docs =  c("proposal"), wi
         create_unified_title_variable(lang="en", guess_title_lang = FALSE, guess_title_lang_conflict = TRUE, rm_raw = rm_raw) %>%
         remove_extra_variables(varnames_regex = var_rm_regex) %>%
         {if(wide) . else long(.)} %>%
-        filter(event==doc) %>% # keep only cases where event == doc
+        dplyr::filter(event==doc) %>% # keep only cases where event == doc
         order_variables()
 
         # @ TODO create eurovoc indicator if not already in dataset
